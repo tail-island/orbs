@@ -1,0 +1,42 @@
+h1, h2, h3, h4, h5, h6 {
+  font-size: 100%;
+}
+
+html {
+  font-family: Georgia, '游明朝', 'Yu Mincho', serif;
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.4em;
+  margin: 0;
+  padding: 0;
+}
+
+div {
+  box-sizing: border-box;
+  margin: 10px;
+  padding: 0;
+}
+
+label {
+  font-size: 1.4rem;
+}
+
+input {
+  font-family: Georgia, '游明朝', 'Yu Mincho', serif;
+  font-size: 1.8rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+textarea {
+  font-family: Georgia, '游明朝', 'Yu Mincho', serif;
+  font-size: 1.8rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+div.form {
+  float: left;
+}

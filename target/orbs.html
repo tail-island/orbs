@@ -3,9 +3,50 @@
   <head>
     <meta charset="utf-8">
     <title>宝玉転がし</title>
+    <link rel="stylesheet" href="orbs.css">
   </head>
   <body>
-    <canvas id="canvas" width="500" height="500"></canvas>
+    <div class="form">
+      <p>
+        <label for="seed">ランダム・シード（0, 1 ... 4294967296）</label>
+        <br>
+        <input id="seed" type="number" value="0" min="0" max="4294967296">
+      </p>
+      <p>
+        <label for="size">ゲーム版のサイズ（10, 11 ... 100）</label>
+        <br>
+        <input id="size" type="number" value="10" min="10" max="100">
+      </p>
+      <p>
+        <label for="black-orb-count">黒い宝玉の数（1, 2 ... 20）</label>
+        <br>
+        <input id="black-orb-count" type="number" value="2" min="1" max="20">
+      </p>
+      <p>
+        <label for="wall-rate">壁の比率（0.1〜0.5）</label>
+        <br>
+        <input id="wall-rate" type="number" value="0.1" min="0.1" max="0.5" step="0.1">
+      </p>
+      <p>
+        <input id="create-question" type="button" value="問題を生成する">
+      </p>
+      <p>
+        <label for="question">問題</label>
+        <br>
+        <textarea id="question" rows="10"></textarea>
+      </p>
+      <p>
+        <label for="answer">回答</label>
+        <br>
+        <textarea id="answer" rows="10"></textarea>
+      </p>
+      <p>
+        <input id="check-answer" type="button" value="回答を確認する">
+      </p>
+    </div>
+    <div class="content">
+      <canvas id="canvas" width="1200" height="800"></canvas>
+    </div>
     <script src="orbs.js"></script>
   </body>
 </html>
