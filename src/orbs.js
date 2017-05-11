@@ -32,12 +32,19 @@ function getAnswer() {
 
   return [
     R.map(positionString => R.map(parseInt, R.reverse(R.split(' ', R.trim(positionString)))), R.take(model.blackOrbCount, lines)),
-    R.map(parseInt, R.map(R.trim, R.drop(model.blackOrbCount, lines)))];
+    R.map(parseInt, R.map(R.trim, R.drop(model.blackOrbCount, lines))),
+  ];
 }
 
 function disableButtons(disabled) {
   document.getElementById('check-question').disabled = disabled;
   document.getElementById('check-answer').disabled   = disabled;
+
+  R.times(
+    (i) => {
+      document.getElementById(`command-${i}`).disabled = disabled;
+    },
+    4);
 }
 
 async function checkModel() {
@@ -100,3 +107,25 @@ document.getElementById('check-answer').addEventListener('click', async () => {
     throw e;
   }
 });
+
+R.times(
+  (i) => {
+    document.getElementById(`command-${i}`).addEventListener(
+      'click',
+      async () => {
+        try {
+          disableButtons(true);
+
+          await model.doCommand(i);
+
+          disableButtons(false);
+        } catch (e) {
+          alert(e);
+
+          disableButtons(false);
+
+          throw e;
+        }
+      });
+  },
+  4);

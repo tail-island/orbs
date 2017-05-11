@@ -97,22 +97,32 @@ export default class Model {
       (resolve, reject) => {
         setTimeout(
           () => {
-            if (!(x >= 0 && x < this.size && y >= 0 | y < this.size)) {
-              reject(new Error(`(${x}, ${y})には、黒い宝玉を置けません。`));
+            try {
+              if (!(x >= 0 && x < this.size && y >= 0 && y < this.size)) {
+                throw new Error(`(${x}, ${y})には、黒い宝玉を置けません。`);
+              }
+
+              const scores = (() => {
+                const result = [0, 0, 0];
+
+                const item = this.items[y][x];
+
+                if (!(item instanceof Orb) || item instanceof BlackOrb) {
+                  throw new Error(`(${x}, ${y})には、黒い宝玉を置けません。`);
+                }
+
+                result[item.color] = 1;
+
+                return result;
+              })();
+
+              this.items[y][x] = new BlackOrb(scores);
+              this._view.update();
+
+              resolve();
+            } catch (e) {
+              reject(e);
             }
-
-            const scores = (() => {
-              const result = [0, 0, 0];
-
-              result[this.items[y][x].color] = 1;
-
-              return result;
-            })();
-
-            this.items[y][x] = new BlackOrb(scores);
-            this._view.update();
-
-            resolve();
           },
           this.wait);
       });
@@ -123,71 +133,74 @@ export default class Model {
       (resolve, reject) => {
         setTimeout(
           () => {
-            const [dy, dx] = [[0, -1], [-1, 0], [0, 1], [1, 0]][command];
+            try {
+              const [dy, dx] = [[0, -1], [-1, 0], [0, 1], [1, 0]][command];
 
-            const blackOrbPositions = R.sort(
-              (position1, position2) => {
-                switch (command) {
-                case 0:
-                  return position1[1] - position2[1];
-                case 1:
-                  return position1[0] - position2[0];
-                case 2:
-                  return position2[1] - position1[1];
-                case 3:
-                  return position2[0] - position1[0];
-                default:
-                  reject(new Error(`${command}は、不正なコマンドです。`));
-                  return null;
-                }
-              },
-              this.getBlackOrbPositions());
+              const blackOrbPositions = R.sort(
+                (position1, position2) => {
+                  switch (command) {
+                  case 0:
+                    return position1[1] - position2[1];
+                  case 1:
+                    return position1[0] - position2[0];
+                  case 2:
+                    return position2[1] - position1[1];
+                  case 3:
+                    return position2[0] - position1[0];
+                  default:
+                    throw new Error(`${command}は、不正なコマンドです。`);
+                  }
+                },
+                this.getBlackOrbPositions());
 
-            const movedCount = R.sum(
-              R.map(
-                ([cy, cx]) => {
-                  const ny = cy + dy;
-                  const nx = cx + dx;
+              const movedCount = R.sum(
+                R.map(
+                  ([cy, cx]) => {
+                    const ny = cy + dy;
+                    const nx = cx + dx;
 
-                  if (ny === -1 || ny === this.size || nx === -1 || nx === this.size) {
-                    if (nx === -1) {
-                      this.score += this.items[cy][cx].scores[this.frames[0][ny].color];
-                    }
-                    if (ny === -1) {
-                      this.score += this.items[cy][cx].scores[this.frames[1][nx].color];
-                    }
-                    if (nx === this.size) {
-                      this.score += this.items[cy][cx].scores[this.frames[2][ny].color];
-                    }
-                    if (ny === this.size) {
-                      this.score += this.items[cy][cx].scores[this.frames[3][nx].color];
+                    if (ny === -1 || ny === this.size || nx === -1 || nx === this.size) {
+                      if (nx === -1) {
+                        this.score += this.items[cy][cx].scores[this.frames[0][ny].color];
+                      }
+                      if (ny === -1) {
+                        this.score += this.items[cy][cx].scores[this.frames[1][nx].color];
+                      }
+                      if (nx === this.size) {
+                        this.score += this.items[cy][cx].scores[this.frames[2][ny].color];
+                      }
+                      if (ny === this.size) {
+                        this.score += this.items[cy][cx].scores[this.frames[3][nx].color];
+                      }
+
+                      this.items[cy][cx] = null;
+
+                      return 1;
                     }
 
+                    const nextItem = this.items[ny][nx];
+
+                    if (nextItem instanceof Wall || nextItem instanceof BlackOrb) {
+                      return 0;
+                    }
+
+                    if (nextItem instanceof Orb) {
+                      this.items[cy][cx].scores[nextItem.color] += 1;
+                    }
+
+                    this.items[ny][nx] = this.items[cy][cx];
                     this.items[cy][cx] = null;
 
                     return 1;
-                  }
+                  },
+                  blackOrbPositions));
 
-                  const nextItem = this.items[ny][nx];
+              this._view.update();
 
-                  if (nextItem instanceof Wall || nextItem instanceof BlackOrb) {
-                    return 0;
-                  }
-
-                  if (nextItem instanceof Orb) {
-                    this.items[cy][cx].scores[nextItem.color] += 1;
-                  }
-
-                  this.items[ny][nx] = this.items[cy][cx];
-                  this.items[cy][cx] = null;
-
-                  return 1;
-                },
-                blackOrbPositions));
-
-            this._view.update();
-
-            resolve(movedCount);
+              resolve(movedCount);
+            } catch (e) {
+              reject(e);
+            }
           },
           this.wait);
       });
@@ -195,12 +208,16 @@ export default class Model {
 
   async doCommand(command) {
     return new Promise(
-      (resolve) => {
+      (resolve, reject) => {
         setTimeout(
           async () => {
-            while (await this.doCommandStep(command) > 0);
+            try {
+              while (await this.doCommandStep(command) > 0);
 
-            resolve();
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
           },
           this.wait);
       });

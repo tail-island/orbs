@@ -141,8 +141,8 @@ export default class View {
         this._context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
         this._context.stroke();
 
-        this._context.textBaseline = 'top';
         this._context.font = "12px 'Georgia'";
+        this._context.textBaseline = 'top';
 
         this._context.fillStyle = 'red';
         this._context.fillText(`${this._model.items[y][x].scores[0]} reds`,   this._canvas.height + 40, i * 40 +  2);
@@ -156,8 +156,9 @@ export default class View {
       blackOrbPositions);
 
     this._context.font = "24px 'Georgia'";
+    this._context.textBaseline = 'top';
     this._context.fillStyle = 'black';
-    this._context.fillText(`Score: ${this._model.score}`, this._canvas.height + 200, this._canvas.height / 2 - 12);
+    this._context.fillText(`Score: ${this._model.score}`, this._canvas.height + 160, this._canvas.height / 2 - 12);
 
     this._context.restore();
   }
