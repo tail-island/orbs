@@ -16,7 +16,8 @@ module.exports = {
     "no-multi-spaces": 0,
     "no-restricted-syntax": 0,
     "no-underscore-dangle": 0,
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "no-useless-return": 0
   },
   "env": {
     "browser": true

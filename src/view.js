@@ -1,21 +1,26 @@
-import R from 'ramda';
+import R                   from 'ramda';
+import { Wall, Gate, Orb } from './model';
 
 export default class View {
-  constructor(canvas) {
-    this._fillStyles = [
+  static get fillStyles() {
+    return [
       'rgb( 63,  63,  63)',
       'rgb(255, 127, 127)',
       'rgb(127, 255, 127)',
       'rgb(165, 165, 255)',
     ];
+  }
 
-    this._strokeStyles = [
+  static get strokeStyles() {
+    return [
       'rgb( 31,  31,  31)',
       'rgb( 63,  31,  31)',
       'rgb( 31,  63,  31)',
       'rgb( 31,  63,  63)',
     ];
+  }
 
+  constructor(canvas) {
     this._canvas  = canvas;
     this._context = canvas.getContext('2d');
   }
@@ -24,46 +29,31 @@ export default class View {
     this._model = model;
   }
 
-  _fillStyle(item) {
-    return this._fillStyles[
-      item - this._model.itemType.black
-    ];
-  }
-
-  _strokeStyle(item) {
-    return this._strokeStyles[
-      item - this._model.itemType.black
-    ];
-  }
-
-  _drawBlank(y, x) {
-    this._context.clearRect(x, y, 1.0, 1.0);
-  }
-
-  _drawWall(y, x) {
+  _drawWall(y, x, _wall) {
     this._context.beginPath();
     this._context.rect(x + 0.2, y + 0.2, 0.6, 0.6);
     this._context.closePath();
 
-    this._context.fillStyle   = 'rgb(0, 0, 0)';
-    this._context.strokeStyle = 'rgb(0, 0, 0)';
+    this._context.fillStyle = 'rgb(0, 0, 0)';
     this._context.fill();
+
+    this._context.strokeStyle = 'rgb(0, 0, 0)';
     this._context.stroke();
   }
 
-  _drawOrb(y, x, item) {
+  _drawOrb(y, x, orb) {
     this._context.beginPath();
     this._context.arc(x + 0.5, y + 0.5, 0.4, 0, Math.PI * 2, false);
     this._context.closePath();
 
-    this._context.fillStyle   = this._fillStyle(item);
-    this._context.strokeStyle = this._strokeStyle(item);
-
+    this._context.fillStyle = View.fillStyles[orb.color];
     this._context.fill();
+
+    this._context.strokeStyle = View.strokeStyles[orb.color];
     this._context.stroke();
   }
 
-  _drawGate(y, x, item) {
+  _drawGate(y, x, gate) {
     const isHorizontal = y === -1 || y === this._model.size;
     const isVertical   = x === -1 || x === this._model.size;
 
@@ -75,11 +65,25 @@ export default class View {
       isVertical   ? 0.8 : 0.4);
     this._context.closePath();
 
-    this._context.fillStyle   = this._fillStyle(item);
-    this._context.strokeStyle = this._strokeStyle(item);
-
+    this._context.fillStyle = View.fillStyles[gate.color];
     this._context.fill();
+
+    this._context.strokeStyle = View.strokeStyles[gate.color];
     this._context.stroke();
+  }
+
+  _drawItem(y, x, item) {
+    if (item instanceof Wall) {
+      this._drawWall(y, x, item);
+    }
+
+    if (item instanceof Gate) {
+      this._drawGate(y, x, item);
+    }
+
+    if (item instanceof Orb) {
+      this._drawOrb(y, x, item);
+    }
   }
 
   _drawCase() {
@@ -97,54 +101,20 @@ export default class View {
       (row, y) => {
         R.addIndex(R.forEach)(
           (item, x) => {
-            switch (item) {
-            case this._model.itemType.blank:
-              this._drawBlank(y, x);
-              break;
-            case this._model.itemType.wall:
-              this._drawWall(y, x);
-              break;
-            default:
-              this._drawOrb(y, x, item);
-              break;
-            }
+            this._drawItem(y, x, item);
           },
           row);
       },
       this._model.items);
 
-    // draw blackOrbs.
-
-    R.forEach(
-      (blackOrb) => {
-        if (blackOrb.y < -1 || blackOrb.y > this._model.size ||
-            blackOrb.x < -1 || blackOrb.x > this._model.size) {
-          return;
-        }
-
-        this._drawOrb(blackOrb.y, blackOrb.x, this._model.itemType.black);
-      },
-      this._model.blackOrbs);
-
     // draw frames.
 
-    const drawFrameItem = (y, x, item) => {
-      switch (item) {
-      case this._model.itemType.wall:
-        this._drawWall(y, x);
-        break;
-      default:
-        this._drawGate(y, x, item);
-        break;
-      }
-    };
-
     const drawVFrame = (x, frame) => {
-      R.addIndex(R.forEach)((item, y) => { drawFrameItem(y, x, item); }, frame);
+      R.addIndex(R.forEach)((item, y) => { this._drawItem(y, x, item); }, frame);
     };
 
     const drawHFrame = (y, frame) => {
-      R.addIndex(R.forEach)((item, x) => { drawFrameItem(y, x, item); }, frame);
+      R.addIndex(R.forEach)((item, x) => { this._drawItem(y, x, item); }, frame);
     };
 
     drawVFrame(-1,               this._model.frames[0]);
@@ -155,9 +125,42 @@ export default class View {
     this._context.restore();
   }
 
+  _drawStatus() {
+    this._context.save();
+
+    const orbSize = this._canvas.height / (this._model.size + 2);
+    const blackOrbPositions = R.sort((position1, position2) => position1[0] - position2[0], this._model.getBlackOrbPositions());
+
+    R.addIndex(R.forEach)(
+      ([y, x], i) => {
+        this._context.beginPath();
+        this._context.moveTo((x + 1) * orbSize + orbSize / 2, (y + 1) * orbSize + orbSize / 2);
+        this._context.lineTo(this._canvas.height + 100, i * 40 + 18);
+        this._context.closePath();
+
+        this._context.textBaseline = 'top';
+        this._context.font = "12px 'Georgia'";
+        this._context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+        this._context.stroke();
+
+        this._context.fillStyle = 'red';
+        this._context.fillText(`${this._model.items[y][x].scores[0]} reds`,   this._canvas.height + 110, i * 40 +  2);
+
+        this._context.fillStyle = 'green';
+        this._context.fillText(`${this._model.items[y][x].scores[1]} greens`, this._canvas.height + 110, i * 40 + 14);
+
+        this._context.fillStyle = 'blue';
+        this._context.fillText(`${this._model.items[y][x].scores[2]} blues`,  this._canvas.height + 110, i * 40 + 26);
+      },
+      blackOrbPositions);
+
+    this._context.restore();
+  }
+
   update() {
     this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
     this._drawCase();
+    this._drawStatus();
   }
 }

@@ -30,7 +30,9 @@ function getModelParams() {
 function getAnswer() {
   const lines = R.split(/\n|\r\n|\r/, document.getElementById('answer').value);
 
-  return [R.map(positionString => R.map(parseInt, R.reverse(R.split(' ', R.trim(positionString)))), R.take(model.blackOrbCount, lines)), R.map(R.trim, R.drop(model.blackOrbCount, lines))];
+  return [
+    R.map(positionString => R.map(parseInt, R.reverse(R.split(' ', R.trim(positionString)))), R.take(model.blackOrbCount, lines)),
+    R.map(parseInt, R.map(R.trim, R.drop(model.blackOrbCount, lines)))];
 }
 
 document.getElementById('create-question').addEventListener('click', async () => {
@@ -46,12 +48,19 @@ document.getElementById('create-question').addEventListener('click', async () =>
     document.getElementById('question').value = model.questionString;
   } catch (e) {
     alert(e);
+
+    throw e;
   }
 });
 
 document.getElementById('check-answer').addEventListener('click', async () => {
   try {
+    document.getElementById('create-question').click();
+
     const [positions, commands] = getAnswer();
+    const wait = parseFloat(document.getElementById('wait').value);
+
+    model.wait = wait;
 
     for (const position of positions) {
       await model.pushBlackOrb(...position);
@@ -62,5 +71,7 @@ document.getElementById('check-answer').addEventListener('click', async () => {
     }
   } catch (e) {
     alert(e);
+
+    throw e;
   }
 });
