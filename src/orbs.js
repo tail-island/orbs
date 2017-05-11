@@ -35,19 +35,51 @@ function getAnswer() {
     R.map(parseInt, R.map(R.trim, R.drop(model.blackOrbCount, lines)))];
 }
 
-document.getElementById('create-question').addEventListener('click', async () => {
+function disableButtons(disabled) {
+  document.getElementById('check-question').disabled = disabled;
+  document.getElementById('check-answer').disabled   = disabled;
+}
+
+async function checkModel() {
+  model = new Model(...getModelParams());
+  view  = new View(document.getElementById('canvas'));
+
+  document.getElementById('question').value = model.questionString;
+
+  model.setView(view);
+  view.setModel(model);
+
+  view.update();
+}
+
+async function checkAnswer() {
+  checkModel();
+
+  const [positions, commands] = getAnswer();
+  const wait = parseFloat(document.getElementById('wait').value);
+
+  model.wait = wait;
+
+  for (const position of positions) {
+    await model.pushBlackOrb(...position);
+  }
+
+  for (const command of commands) {
+    await model.doCommand(command);
+  }
+}
+
+document.getElementById('check-question').addEventListener('click', async () => {
   try {
-    model = new Model(...getModelParams());
-    view  = new View(document.getElementById('canvas'));
+    disableButtons(true);
 
-    model.setView(view);
-    view.setModel(model);
+    await checkModel();
 
-    view.update();
-
-    document.getElementById('question').value = model.questionString;
+    disableButtons(false);
   } catch (e) {
     alert(e);
+
+    disableButtons(false);
 
     throw e;
   }
@@ -55,22 +87,15 @@ document.getElementById('create-question').addEventListener('click', async () =>
 
 document.getElementById('check-answer').addEventListener('click', async () => {
   try {
-    document.getElementById('create-question').click();
+    disableButtons(true);
 
-    const [positions, commands] = getAnswer();
-    const wait = parseFloat(document.getElementById('wait').value);
+    await checkAnswer();
 
-    model.wait = wait;
-
-    for (const position of positions) {
-      await model.pushBlackOrb(...position);
-    }
-
-    for (const command of commands) {
-      await model.doCommand(command);
-    }
+    disableButtons(false);
   } catch (e) {
     alert(e);
+
+    disableButtons(false);
 
     throw e;
   }

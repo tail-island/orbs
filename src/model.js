@@ -9,11 +9,11 @@ export class Wall {
 
 export class Colored {
   static get colors() {
-    return { black: 0, red: 1, green: 2, blue: 3 };
+    return { red: 0, green: 1, blue: 2, black: 3 };
   }
 
   constructor(color) {
-    this.name = ['b', 'r', 'g', 'b'][color];
+    this.name = ['r', 'g', 'b', 'x'][color];
     this.color = color;
   }
 }
@@ -39,6 +39,7 @@ export default class Model {
     this.size = size;
     this.blackOrbCount = blackOrbCount;
 
+    this.score = 0;
     this.items = R.times(
       (_y) => {
         return R.times(
@@ -47,17 +48,16 @@ export default class Model {
               return new Wall();
             }
 
-            return new Orb(random.nextUInt() % 3 + Colored.colors.red);
+            return new Orb(random.nextUInt() % 3);
           },
           this.size);
       },
       this.size);
-
     this.frames = R.times(
       (_) => {
         return R.times(
           (_i) => {
-            return new Gate(random.nextUInt() % 3 + Colored.colors.red);
+            return new Gate(random.nextUInt() % 3);
           },
           this.size);
       },
@@ -102,17 +102,11 @@ export default class Model {
             }
 
             const scores = (() => {
-              switch (this.items[y][x].color) {
-              case Colored.colors.red:
-                return [1, 0, 0];
-              case Colored.colors.green:
-                return [0, 1, 0];
-              case Colored.colors.blue:
-                return [0, 0, 1];
-              default:
-                reject(new Error(`(${x}, ${y})には、黒い宝玉を置けません`));
-                return null;
-              }
+              const result = [0, 0, 0];
+
+              result[this.items[y][x].color] = 1;
+
+              return result;
             })();
 
             this.items[y][x] = new BlackOrb(scores);
@@ -156,7 +150,21 @@ export default class Model {
                   const nx = cx + dx;
 
                   if (ny === -1 || ny === this.size || nx === -1 || nx === this.size) {
+                    if (nx === -1) {
+                      this.score += this.items[cy][cx].scores[this.frames[0][ny].color];
+                    }
+                    if (ny === -1) {
+                      this.score += this.items[cy][cx].scores[this.frames[1][nx].color];
+                    }
+                    if (nx === this.size) {
+                      this.score += this.items[cy][cx].scores[this.frames[2][ny].color];
+                    }
+                    if (ny === this.size) {
+                      this.score += this.items[cy][cx].scores[this.frames[3][nx].color];
+                    }
+
                     this.items[cy][cx] = null;
+
                     return 1;
                   }
 
@@ -167,7 +175,7 @@ export default class Model {
                   }
 
                   if (nextItem instanceof Orb) {
-                    this.items[cy][cx].scores[nextItem.color - Colored.colors.red] += 1;
+                    this.items[cy][cx].scores[nextItem.color] += 1;
                   }
 
                   this.items[ny][nx] = this.items[cy][cx];

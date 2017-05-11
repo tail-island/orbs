@@ -4,19 +4,19 @@ import { Wall, Gate, Orb } from './model';
 export default class View {
   static get fillStyles() {
     return [
-      'rgb( 63,  63,  63)',
       'rgb(255, 127, 127)',
       'rgb(127, 255, 127)',
       'rgb(165, 165, 255)',
+      'rgb( 63,  63,  63)',
     ];
   }
 
   static get strokeStyles() {
     return [
-      'rgb( 31,  31,  31)',
       'rgb( 63,  31,  31)',
       'rgb( 31,  63,  31)',
       'rgb( 31,  63,  63)',
+      'rgb( 31,  31,  31)',
     ];
   }
 
@@ -135,24 +135,29 @@ export default class View {
       ([y, x], i) => {
         this._context.beginPath();
         this._context.moveTo((x + 1) * orbSize + orbSize / 2, (y + 1) * orbSize + orbSize / 2);
-        this._context.lineTo(this._canvas.height + 100, i * 40 + 18);
+        this._context.lineTo(this._canvas.height + 32, i * 40 + 18);
         this._context.closePath();
 
-        this._context.textBaseline = 'top';
-        this._context.font = "12px 'Georgia'";
         this._context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
         this._context.stroke();
 
+        this._context.textBaseline = 'top';
+        this._context.font = "12px 'Georgia'";
+
         this._context.fillStyle = 'red';
-        this._context.fillText(`${this._model.items[y][x].scores[0]} reds`,   this._canvas.height + 110, i * 40 +  2);
+        this._context.fillText(`${this._model.items[y][x].scores[0]} reds`,   this._canvas.height + 40, i * 40 +  2);
 
         this._context.fillStyle = 'green';
-        this._context.fillText(`${this._model.items[y][x].scores[1]} greens`, this._canvas.height + 110, i * 40 + 14);
+        this._context.fillText(`${this._model.items[y][x].scores[1]} greens`, this._canvas.height + 40, i * 40 + 14);
 
         this._context.fillStyle = 'blue';
-        this._context.fillText(`${this._model.items[y][x].scores[2]} blues`,  this._canvas.height + 110, i * 40 + 26);
+        this._context.fillText(`${this._model.items[y][x].scores[2]} blues`,  this._canvas.height + 40, i * 40 + 26);
       },
       blackOrbPositions);
+
+    this._context.font = "24px 'Georgia'";
+    this._context.fillStyle = 'black';
+    this._context.fillText(`Score: ${this._model.score}`, this._canvas.height + 200, this._canvas.height / 2 - 12);
 
     this._context.restore();
   }
