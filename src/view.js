@@ -135,30 +135,30 @@ export default class View {
       ([y, x], i) => {
         this._context.beginPath();
         this._context.moveTo((x + 1) * orbSize + orbSize / 2, (y + 1) * orbSize + orbSize / 2);
-        this._context.lineTo(this._canvas.height + 32, i * 40 + 18);
+        this._context.lineTo(this._canvas.height + 8, i * 30 + 15);
         this._context.closePath();
 
         this._context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
         this._context.stroke();
 
-        this._context.font = "12px 'Georgia'";
+        this._context.font = "9px 'Georgia'";
         this._context.textBaseline = 'top';
 
         this._context.fillStyle = 'red';
-        this._context.fillText(`${this._model.items[y][x].scores[0]} reds`,   this._canvas.height + 40, i * 40 +  2);
+        this._context.fillText(`${this._model.items[y][x].scores[0]} reds`,   this._canvas.height + 10, i * 30 +  1);
 
         this._context.fillStyle = 'green';
-        this._context.fillText(`${this._model.items[y][x].scores[1]} greens`, this._canvas.height + 40, i * 40 + 14);
+        this._context.fillText(`${this._model.items[y][x].scores[1]} greens`, this._canvas.height + 10, i * 30 + 10);
 
         this._context.fillStyle = 'blue';
-        this._context.fillText(`${this._model.items[y][x].scores[2]} blues`,  this._canvas.height + 40, i * 40 + 26);
+        this._context.fillText(`${this._model.items[y][x].scores[2]} blues`,  this._canvas.height + 10, i * 30 + 19);
       },
       blackOrbPositions);
 
-    this._context.font = "24px 'Georgia'";
+    this._context.font = "16px 'Georgia'";
     this._context.textBaseline = 'top';
     this._context.fillStyle = 'black';
-    this._context.fillText(`Score: ${this._model.score}`, this._canvas.height + 160, this._canvas.height / 2 - 12);
+    this._context.fillText(`Score: ${this._model.score}`, this._canvas.height + 10 + (this._canvas.width - this._canvas.height) / 2, this._canvas.height / 2 - 8);
 
     this._context.restore();
   }

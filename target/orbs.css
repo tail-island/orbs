@@ -8,7 +8,7 @@ html {
 }
 
 body {
-  font-size: 1.4em;
+  font-size: 1.2em;
   margin: 0;
   padding: 0;
 }
@@ -20,19 +20,28 @@ div {
 }
 
 label {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
 }
 
 input {
+  border: 1px solid #ccc;
   font-family: Georgia, '游明朝', 'Yu Mincho', serif;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   box-sizing: border-box;
   width: 100%;
 }
 
-textarea {
+input[type="button"] {
+  background-color: #fff;
+  border: 1px solid #ccc;
   font-family: Georgia, '游明朝', 'Yu Mincho', serif;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
+}
+
+textarea {
+  border: 1px solid #ccc;
+  font-family: Georgia, '游明朝', 'Yu Mincho', serif;
+  font-size: 1.6rem;
   box-sizing: border-box;
   width: 100%;
 }
