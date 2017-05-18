@@ -5,12 +5,13 @@
   "author": "OJIMA Ryoji",
   "license": "EPL-1.0",
   "dependencies": {
+    "babel-polyfill": "^6.23.0",
     "ramda": "^0.23.0"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
-    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-env": "^1.4.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.1.3",
     "eslint-plugin-import": "^2.2.0",
