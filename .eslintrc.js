@@ -15,6 +15,7 @@ module.exports = {
     "no-console": 0,
     "no-mixed-operators": 0,
     "no-multi-spaces": 0,
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
     "no-restricted-syntax": 0,
     "no-underscore-dangle": 0,
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],

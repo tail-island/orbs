@@ -1,5 +1,5 @@
-import R                   from 'ramda';
-import { Wall, Gate, Orb } from './model';
+import R                             from 'ramda';
+import { Wall, Gate, Orb, BlackOrb } from './model';
 
 export default class View {
   static get fillStyles() {
@@ -86,14 +86,17 @@ export default class View {
     }
   }
 
-  _drawCase() {
-    this._context.save();
-
+  _setContextForCase() {
     const orbSize = this._canvas.height / (this._model.size + 2);
 
     this._context.scale(orbSize, orbSize);
     this._context.translate(1.0, 1.0);  // ケースのフレームの分を、移動しておきます。
     this._context.lineWidth = 0.1;
+  }
+
+  _prepareFullCaseImage() {
+    this._context.save();
+    this._setContextForCase();
 
     // draw items.
 
@@ -121,6 +124,34 @@ export default class View {
     drawHFrame(-1,               this._model.frames[1]);
     drawVFrame(this._model.size, this._model.frames[2]);
     drawHFrame(this._model.size, this._model.frames[3]);
+
+    this._context.restore();
+
+    this._fullCaseImage = this._context.getImageData(0, 0, this._canvas.height, this._canvas.height);
+    this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+  }
+
+  _drawCase() {
+    // 効率のために、関数型じゃない書き方をしました。遅延評価欲しい……。
+
+    this._context.putImageData(this._fullCaseImage, 0, 0);
+
+    this._context.save();
+    this._setContextForCase();
+
+    for (let y = 0; y < this._model.size; ++y) {
+      for (let x = 0; x < this._model.size; ++x) {
+        const item = this._model.items[y][x];
+
+        if (!item) {
+          this._context.clearRect(x, y, 1, 1);
+        }
+
+        if (item instanceof BlackOrb) {
+          this._drawOrb(y, x, item);
+        }
+      }
+    }
 
     this._context.restore();
   }
@@ -165,6 +196,10 @@ export default class View {
 
   update() {
     this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+    if (!this._fullCaseImage) {
+      this._prepareFullCaseImage();
+    }
 
     this._drawCase();
     this._drawStatus();
