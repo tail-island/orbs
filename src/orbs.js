@@ -32,7 +32,7 @@ function getAnswer() {
 
   return [
     R.map(positionString => R.map(parseInt, R.reverse(R.split(' ', R.trim(positionString)))), R.take(model.blackOrbCount, lines)),
-    R.filter(R.identity, R.map(parseInt, R.map(R.trim, R.drop(model.blackOrbCount, lines))))];
+    R.map(parseInt, R.map(R.trim, R.drop(model.blackOrbCount, lines)))];
 }
 
 function disableButtons(disabled) {
