@@ -6,7 +6,7 @@
   "license": "EPL-1.0",
   "dependencies": {
     "babel-polyfill": "^6.23.0",
-    "ramda": "^0.23.0"
+    "ramda": "^0.24.0"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
