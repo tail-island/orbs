@@ -28,4 +28,4 @@
 
 ルールのプログラミング部分も含めて、腕の見せどころだとお考えください。
 
-GUIのコードがあるので、それを参考にしていただければ……と考えたのですけど、いまコードを見返してみたらあからさまにやっつけなへっぽこコードになっていました……。なので、採点用のプログラムも合わせて公開します。ルールのプログラミングの際には、[orbs-scorekeeper](https://github.com/tail-island/orbs-scorekeeper)を参照してみてください。ECMAScript2017と[ramda](http://ramdajs.com/)の組み合わせで書いています。
+GUIのコードがあるので、それを参考にしていただければ……と考えたのですけど、いまコードを見返してみたらあからさまにやっつけなへっぽこコードでした……。さすがにこのままではアレなので、採点用のプログラムも公開します。ルールのプログラミングの際には、[orbs-scorekeeper](https://github.com/tail-island/orbs-scorekeeper)も参照してみてください。ECMAScript2017と[ramda](http://ramdajs.com/)の組み合わせで書いています。
