@@ -28,7 +28,7 @@ function getModelParams() {
 }
 
 function getAnswer() {
-  const lines = R.split(/\n|\r\n|\r/, document.getElementById('answer').value);
+  const lines = R.split(/\n|\r\n|\r/, R.trim(document.getElementById('answer').value));
 
   return [
     R.map(positionString => R.map(parseInt, R.reverse(R.split(' ', R.trim(positionString)))), R.take(model.blackOrbCount, lines)),
