@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  app:
+    image: rojima1/node
+    privileged: true
+    command: emacs
+    working_dir: /home/developer/orbs
+    environment:
+      - DISPLAY=${DISPLAY}
+      - PATH=/usr/local/nvidia/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - LD_LIBRARY_PATH=/usr/local/nvidia/lib64
+    volumes:
+      - .:/home/developer/orbs
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - nvidia_driver_381.22:/usr/local/nvidia
+
+volumes:
+  nvidia_driver_381.22:
+    external: true

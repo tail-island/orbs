@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  app:
+    image: rojima1/node
+    privileged: true
+    command: emacs
+    working_dir: /home/developer/orbs
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - .:/home/developer/orbs
+      - /tmp/.X11-unix:/tmp/.X11-unix
