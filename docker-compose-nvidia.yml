@@ -13,8 +13,8 @@ services:
     volumes:
       - .:/home/developer/orbs
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - nvidia_driver_381.22:/usr/local/nvidia
+      - nvidia_driver_384.59:/usr/local/nvidia
 
 volumes:
-  nvidia_driver_381.22:
+  nvidia_driver_384.59:
     external: true
